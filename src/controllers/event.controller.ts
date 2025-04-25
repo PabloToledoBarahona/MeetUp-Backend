@@ -97,3 +97,17 @@ export const createEventFromTemplate = async (req: Request, res: Response) => {
       res.status(400).json({ success: false, message: err.message })
     }
   }
+
+  export const cancelEventController = async (req: Request, res: Response) => {
+    try {
+      // @ts-ignore
+      const userId = req.user.id
+      const eventId = req.params.id
+  
+      const cancelledEvent = await eventService.cancelEvent(eventId, userId)
+  
+      res.status(200).json({ success: true, message: 'Evento cancelado exitosamente', data: cancelledEvent })
+    } catch (error: any) {
+      res.status(400).json({ success: false, message: error.message })
+    }
+  }
