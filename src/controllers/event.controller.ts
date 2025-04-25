@@ -70,3 +70,30 @@ export const getJunteTemplate = async (_req: Request, res: Response) => {
     data: junteTemplate
   })
 }
+
+export const createEventFromTemplate = async (req: Request, res: Response) => {
+    try {
+      // @ts-ignore
+      const userId = req.user.id
+      const { type, overrides } = req.body
+  
+      // Importamos las plantillas
+      const { birthdayTemplate, junteTemplate } = await import('../data/templates')
+  
+      let baseTemplate
+      if (type === 'birthday') baseTemplate = birthdayTemplate
+      else if (type === 'junte') baseTemplate = junteTemplate
+      else throw new Error('Tipo de plantilla no válida')
+  
+      const eventData = {
+        ...baseTemplate,
+        ...overrides // el usuario puede sobreescribir valores como name o startTime
+      }
+  
+      const newEvent = await eventService.createEvent(eventData, userId)
+  
+      res.status(201).json({ success: true, message: 'Evento creado desde plantilla', data: newEvent })
+    } catch (err: any) {
+      res.status(400).json({ success: false, message: err.message })
+    }
+  }
