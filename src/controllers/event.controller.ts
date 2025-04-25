@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as eventService from "../services/event.service";
+import { birthdayTemplate } from '../data/templates'
 
 export const createEvent = async (req: Request, res: Response) => {
   try {
@@ -52,3 +53,11 @@ export const removeEvent = async (req: Request, res: Response) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
+
+export const getBirthdayTemplate = async (_req: Request, res: Response) => {
+  res.status(200).json({
+    success: true,
+    message: 'Plantilla de cumpleaños',
+    data: birthdayTemplate
+  })
+}
