@@ -1,16 +1,16 @@
 {
   "name": "meetup-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Backend para la aplicación móvil MeetUp",
+  "main": "dist/index.js",
   "scripts": {
-  "dev": "nodemon src/index.ts",
-  "build": "tsc",
-  "start": "node dist/index.js"
+    "dev": "nodemon src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
   },
+  "author": "Pablo Toledo",
+  "license": "MIT",
   "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
