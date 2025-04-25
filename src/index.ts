@@ -7,6 +7,7 @@ dotenv.config()
 import { connectDB } from './config/db'
 import userRoutes from './routes/user.routes'
 import eventRoutes from './routes/event.routes'
+import invitationRoutes from './routes/invitation.routes'
 
 connectDB()
 
@@ -18,7 +19,8 @@ app.use(express.json())
 
 app.use('/api/users', userRoutes)
 app.use('/api/events', eventRoutes)
+app.use('/api/invitations', invitationRoutes)
 
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`)
+  console.log(`Servidor corriendo en http://localhost:${PORT}`)
 })
