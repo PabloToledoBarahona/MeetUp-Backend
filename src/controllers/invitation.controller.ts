@@ -18,3 +18,30 @@ export const importContactsController = async (req: Request, res: Response) => {
     res.status(400).json({ success: false, message: err.message })
   }
 }
+
+export const listInvitations = async (req: Request, res: Response) => {
+    try {
+      const { eventId } = req.params
+      const invitations = await service.getInvitationsByEvent(eventId)
+      res.status(200).json({ success: true, data: invitations })
+    } catch (err: any) {
+      res.status(400).json({ success: false, message: err.message })
+    }
+  }
+
+export const confirmAttendance = async (req: Request, res: Response) => {
+    try {
+      const { status } = req.body
+      const { id } = req.params
+  
+      if (!['confirmed', 'declined', 'maybe'].includes(status)) {
+        throw new Error('Estado de confirmación inválido')
+      }
+  
+      const updatedInvitation = await service.updateStatus(id, status)
+  
+      res.status(200).json({ success: true, message: 'Estado actualizado', data: updatedInvitation })
+    } catch (err: any) {
+      res.status(400).json({ success: false, message: err.message })
+    }
+  }

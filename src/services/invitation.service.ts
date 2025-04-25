@@ -21,3 +21,16 @@ export const importContacts = async (eventId: string, contacts: any[], invitedBy
 
   return createdInvitations
 }
+
+export const getInvitationsByEvent = async (eventId: string) => {
+  return Invitation.find({ event: eventId })
+}
+
+export const updateStatus = async (invitationId: string, status: 'pending' | 'confirmed' | 'declined' | 'maybe') => {
+  const invitation = await Invitation.findById(invitationId)
+  if (!invitation) throw new Error('Invitación no encontrada')
+
+  invitation.status = status
+  await invitation.save()
+  return invitation
+}
