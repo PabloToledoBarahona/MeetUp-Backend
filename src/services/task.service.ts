@@ -27,3 +27,20 @@ export const assignTaskToUser = async (taskId: string, userId: string) => {
   await task.save()
   return task
 }
+
+export const updateOwnTaskStatus = async (taskId: string, userId: string, newStatus: 'pending' | 'in_progress' | 'completed') => {
+    const task = await Task.findById(taskId)
+  
+    if (!task) {
+      throw new Error('Tarea no encontrada')
+    }
+  
+    if (!task.assignedTo || task.assignedTo.toString() !== userId) {
+      throw new Error('No tienes permiso para modificar esta tarea')
+    }
+  
+    task.status = newStatus
+    await task.save()
+  
+    return task
+  }
