@@ -146,7 +146,7 @@ npm start
 
 ---
 
-## 👤 Autor
+## Autor
 
 Pablo Toledo  
 Desarrollador Backend – 2025  
