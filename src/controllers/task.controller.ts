@@ -39,3 +39,15 @@ export const deleteTask = async (req: Request, res: Response): Promise<void> => 
     res.status(400).json({ success: false, message: error.message })
   }
 }
+
+export const assignTask = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { taskId } = req.params
+    const { userId } = req.body
+
+    const updated = await service.assignTaskToUser(taskId, userId)
+    res.status(200).json({ success: true, data: updated })
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message })
+  }
+}

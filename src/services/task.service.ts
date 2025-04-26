@@ -1,4 +1,5 @@
 import Task, { ITask } from '../models/task.model'
+import { Types } from 'mongoose'
 
 export const createTask = async (data: Partial<ITask>) => {
   const task = new Task(data)
@@ -7,7 +8,7 @@ export const createTask = async (data: Partial<ITask>) => {
 }
 
 export const getTasksByEvent = async (eventId: string) => {
-  return Task.find({ event: eventId })
+  return Task.find({ event: eventId }).populate('assignedTo', 'name email')
 }
 
 export const updateTask = async (taskId: string, data: Partial<ITask>) => {
@@ -16,4 +17,13 @@ export const updateTask = async (taskId: string, data: Partial<ITask>) => {
 
 export const deleteTask = async (taskId: string) => {
   return Task.findByIdAndDelete(taskId)
+}
+
+export const assignTaskToUser = async (taskId: string, userId: string) => {
+  const task = await Task.findById(taskId)
+  if (!task) throw new Error('Tarea no encontrada')
+
+  task.assignedTo = new Types.ObjectId(userId) // ✅ Conversión correcta
+  await task.save()
+  return task
 }
