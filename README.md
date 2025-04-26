@@ -7,7 +7,9 @@ Este servicio proporciona endpoints para **autenticación, creación y gestión 
 
 ## URL en producción
 
+```
 https://meetup-backend-nsxu.onrender.com
+```
 
 ---
 
@@ -16,7 +18,7 @@ https://meetup-backend-nsxu.onrender.com
 - Node.js + Express
 - MongoDB Atlas
 - Mongoose ODM
-- JSON Web Tokens (JWT)
+- JSON Web Tokens (JWT) (expira en 7 días)
 - TypeScript
 - Render (despliegue)
 
@@ -78,7 +80,8 @@ npm start
 ## Endpoints de autenticación
 
 - `POST /api/users/register` → Registro de nuevo usuario
-- `POST /api/users/login` → Login, devuelve JWT
+- `POST /api/users/login` → Login, devuelve JWT (válido por 7 días)
+- `GET /api/users/me` → Validar token y obtener perfil del usuario autenticado
 
 ---
 
@@ -143,7 +146,7 @@ npm start
 
 ---
 
-## Autor
+## 👤 Autor
 
 Pablo Toledo  
 Desarrollador Backend – 2025  
@@ -151,6 +154,6 @@ Desarrollador Backend – 2025
 
 ---
 
-## 📄 Licencia
+## Licencia
 
 MIT
