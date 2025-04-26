@@ -150,7 +150,7 @@ npm start
 
 Pablo Toledo  
 Desarrollador Backend – 2025  
-🔗 GitHub: [@PabloToledoBarahona](https://github.com/PabloToledoBarahona)
+GitHub: [@PabloToledoBarahona](https://github.com/PabloToledoBarahona)
 
 ---
 
