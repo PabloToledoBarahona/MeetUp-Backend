@@ -1,7 +1,7 @@
 # MeetUp-Backend
 
 Backend para la aplicación móvil **MeetUp**, desarrollada en Node.js + Express + MongoDB (Atlas) y desplegada en Render.  
-Este servicio proporciona endpoints para **autenticación, creación y gestión de eventos**, y uso de plantillas predefinidas como cumpleaños o junte.
+Este servicio proporciona endpoints para **autenticación, creación y gestión de eventos**, uso de **plantillas de eventos**, **gestión de invitados (RSVP)**, **checklist de tareas**, **control financiero** y **cronograma de actividades**.
 
 ---
 
@@ -58,6 +58,7 @@ src/
    MONGO_URI=mongodb+srv://<usuario>:<contraseña>@cluster0.mongodb.net/meetup?retryWrites=true&w=majority
    JWT_SECRET=claveSegura123
    PORT=3000
+   TELEGRAM_BOT_TOKEN=<tu_token_de_bot> (opcional si se usa envío de mensajes Telegram)
    ```
 
 4. Ejecutar en desarrollo:
@@ -77,16 +78,17 @@ src/
 
 ---
 
-## Endpoints de autenticación
+## Endpoints principales
+
+### Autenticación
 
 | Método | URL                             | Descripción                  |
 |--------|----------------------------------|------------------------------|
-| POST   | `/api/users/register`           | Registro de nuevo usuario   |
-| POST   | `/api/users/login`              | Login, devuelve JWT         |
+| POST   | `/api/users/register`            | Registro de nuevo usuario   |
+| POST   | `/api/users/login`               | Login, devuelve JWT         |
+| GET    | `/api/users/me`                  | Obtener información del usuario autenticado |
 
----
-
-## Endpoints de eventos
+### Eventos
 
 | Método | URL                               | Descripción                            |
 |--------|------------------------------------|----------------------------------------|
@@ -94,10 +96,9 @@ src/
 | GET    | `/api/events`                      | Listar eventos creados por el usuario  |
 | PUT    | `/api/events/:id`                  | Editar evento                          |
 | DELETE | `/api/events/:id`                  | Eliminar evento                        |
+| PATCH  | `/api/events/:id/cancel`            | Cancelar evento sin eliminarlo         |
 
----
-
-## Endpoints de plantillas
+### Plantillas de eventos
 
 | Método | URL                                      | Descripción                            |
 |--------|-------------------------------------------|----------------------------------------|
@@ -119,11 +120,48 @@ src/
 }
 ```
 
+### Gestión de invitados (RSVP)
+
+| Método | URL                               | Descripción                            |
+|--------|------------------------------------|----------------------------------------|
+| POST   | `/api/invitations/import`          | Importar invitados manualmente         |
+| PATCH  | `/api/invitations/:id/confirm`      | Confirmar asistencia                  |
+| GET    | `/api/invitations/event/:eventId`   | Listar invitados de un evento          |
+
+### Tareas (Checklist)
+
+| Método | URL                               | Descripción                            |
+|--------|------------------------------------|----------------------------------------|
+| POST   | `/api/tasks`                       | Crear tarea                            |
+| GET    | `/api/tasks/event/:eventId`         | Listar tareas por evento               |
+| PUT    | `/api/tasks/:taskId`                | Actualizar tarea                       |
+| DELETE | `/api/tasks/:taskId`                | Eliminar tarea                         |
+| PATCH  | `/api/tasks/:taskId/assign`         | Asignar ayudante a una tarea            |
+| PATCH  | `/api/tasks/:taskId/status`         | Cambiar estado de la tarea             |
+
+### Finanzas
+
+| Método | URL                               | Descripción                            |
+|--------|------------------------------------|----------------------------------------|
+| POST   | `/api/expenses`                    | Registrar gasto                        |
+| GET    | `/api/expenses/event/:eventId`     | Listar gastos por evento               |
+| DELETE | `/api/expenses/:expenseId`         | Eliminar gasto                         |
+| GET    | `/api/expenses/summary/:eventId`    | Consultar resumen financiero           |
+
+### Cronograma de actividades
+
+| Método | URL                               | Descripción                            |
+|--------|------------------------------------|----------------------------------------|
+| POST   | `/api/activities`                  | Crear actividad en el evento           |
+| GET    | `/api/activities/event/:eventId`   | Listar actividades cronológicas        |
+| PUT    | `/api/activities/:activityId`      | Editar actividad                       |
+| DELETE | `/api/activities/:activityId`      | Eliminar actividad                     |
+
 ---
 
 ## Headers para rutas protegidas
 
-Para las rutas que requieren autenticación, incluir:
+Para todas las rutas protegidas, incluir el header:
 
 ```
 Authorization: Bearer <TOKEN_JWT>
@@ -147,10 +185,10 @@ npm start
 
 Pablo Toledo  
 Desarrollador Backend – 2025  
-[🔗 GitHub: @PabloToledoBarahona](https://github.com/PabloToledoBarahona)
+GitHub: [@PabloToledoBarahona](https://github.com/PabloToledoBarahona)
 
 ---
 
-## 📄 Licencia
+## Licencia
 
 MIT
