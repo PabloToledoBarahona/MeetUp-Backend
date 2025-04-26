@@ -1,7 +1,7 @@
 # MeetUp-Backend
 
 Backend para la aplicación móvil **MeetUp**, desarrollada en Node.js + Express + MongoDB (Atlas) y desplegada en Render.  
-Este servicio proporciona endpoints para **autenticación, creación y gestión de eventos**, uso de **plantillas de eventos**, y **gestión de invitados (RSVP)**.
+Este servicio proporciona endpoints para **autenticación, creación y gestión de eventos**, uso de **plantillas de eventos**, **gestión de invitados (RSVP)**, **checklist de tareas**, **control financiero** y **cronograma de actividades**.
 
 ---
 
@@ -18,7 +18,7 @@ https://meetup-backend-nsxu.onrender.com
 - Node.js + Express
 - MongoDB Atlas
 - Mongoose ODM
-- JSON Web Tokens (JWT) (expira en 7 días)
+- JSON Web Tokens (JWT)
 - TypeScript
 - Render (despliegue)
 
@@ -42,66 +42,72 @@ src/
 ## Instalación local
 
 1. Clonar el repositorio:
-```bash
-git clone https://github.com/PabloToledoBarahona/MeetUp-Backend.git
-cd MeetUp-Backend
-```
+   ```bash
+   git clone https://github.com/PabloToledoBarahona/MeetUp-Backend.git
+   cd MeetUp-Backend
+   ```
 
 2. Instalar dependencias:
-```bash
-npm install
-```
+   ```bash
+   npm install
+   ```
 
 3. Crear archivo `.env` en la raíz:
 
-```env
-MONGO_URI=mongodb+srv://<usuario>:<contraseña>@cluster0.mongodb.net/meetup?retryWrites=true&w=majority
-JWT_SECRET=claveSegura123
-PORT=3000
-```
+   ```env
+   MONGO_URI=mongodb+srv://<usuario>:<contraseña>@cluster0.mongodb.net/meetup?retryWrites=true&w=majority
+   JWT_SECRET=claveSegura123
+   PORT=3000
+   TELEGRAM_BOT_TOKEN=<tu_token_de_bot> (opcional si se usa envío de mensajes Telegram)
+   ```
 
 4. Ejecutar en desarrollo:
-```bash
-npm run dev
-```
+   ```bash
+   npm run dev
+   ```
 
 5. Compilar para producción:
-```bash
-npm run build
-```
+   ```bash
+   npm run build
+   ```
 
 6. Iniciar servidor compilado:
-```bash
-npm start
-```
+   ```bash
+   npm start
+   ```
 
 ---
 
-## Endpoints de autenticación
+## Endpoints principales
 
-- `POST /api/users/register` → Registro de nuevo usuario
-- `POST /api/users/login` → Login, devuelve JWT (válido por 7 días)
-- `GET /api/users/me` → Validar token y obtener perfil del usuario autenticado
+### Autenticación
 
----
+| Método | URL                             | Descripción                  |
+|--------|----------------------------------|------------------------------|
+| POST   | `/api/users/register`            | Registro de nuevo usuario   |
+| POST   | `/api/users/login`               | Login, devuelve JWT         |
+| GET    | `/api/users/me`                  | Obtener información del usuario autenticado |
 
-## Endpoints de eventos
+### Eventos
 
-- `POST /api/events` → Crear evento desde cero
-- `GET /api/events` → Listar eventos creados por el usuario
-- `PUT /api/events/:id` → Editar evento
-- `DELETE /api/events/:id` → Eliminar evento
-- `PATCH /api/events/:id/cancel` → Cancelar evento sin eliminarlo
+| Método | URL                               | Descripción                            |
+|--------|------------------------------------|----------------------------------------|
+| POST   | `/api/events`                      | Crear evento desde cero                |
+| GET    | `/api/events`                      | Listar eventos creados por el usuario  |
+| PUT    | `/api/events/:id`                  | Editar evento                          |
+| DELETE | `/api/events/:id`                  | Eliminar evento                        |
+| PATCH  | `/api/events/:id/cancel`            | Cancelar evento sin eliminarlo         |
 
----
+### Plantillas de eventos
 
-## Endpoints de plantillas
-
-- `GET /api/events/templates/birthday` → Obtener plantilla para cumpleaños
-- `GET /api/events/templates/junte` → Obtener plantilla para juntes
-- `POST /api/events/from-template` → Crear evento usando plantilla + overrides
+| Método | URL                                      | Descripción                            |
+|--------|-------------------------------------------|----------------------------------------|
+| GET    | `/api/events/templates/birthday`          | Obtener plantilla para cumpleaños       |
+| GET    | `/api/events/templates/junte`             | Obtener plantilla para juntes           |
+| POST   | `/api/events/from-template`              | Crear evento usando plantilla + overrides |
 
 **Ejemplo body para `/from-template`:**
+
 ```json
 {
   "type": "birthday",
@@ -114,19 +120,48 @@ npm start
 }
 ```
 
----
+### Gestión de invitados (RSVP)
 
-## Endpoints de gestión de invitados (RSVP)
+| Método | URL                               | Descripción                            |
+|--------|------------------------------------|----------------------------------------|
+| POST   | `/api/invitations/import`          | Importar invitados manualmente         |
+| PATCH  | `/api/invitations/:id/confirm`      | Confirmar asistencia                  |
+| GET    | `/api/invitations/event/:eventId`   | Listar invitados de un evento          |
 
-- `POST /api/invitations/import` → Importar lista de contactos a un evento
-- `PATCH /api/invitations/:id/confirm` → Confirmar asistencia a un evento
-- `GET /api/invitations/event/:eventId` → Listar invitados de un evento (agrupados por estado)
+### Tareas (Checklist)
+
+| Método | URL                               | Descripción                            |
+|--------|------------------------------------|----------------------------------------|
+| POST   | `/api/tasks`                       | Crear tarea                            |
+| GET    | `/api/tasks/event/:eventId`         | Listar tareas por evento               |
+| PUT    | `/api/tasks/:taskId`                | Actualizar tarea                       |
+| DELETE | `/api/tasks/:taskId`                | Eliminar tarea                         |
+| PATCH  | `/api/tasks/:taskId/assign`         | Asignar ayudante a una tarea            |
+| PATCH  | `/api/tasks/:taskId/status`         | Cambiar estado de la tarea             |
+
+### Finanzas
+
+| Método | URL                               | Descripción                            |
+|--------|------------------------------------|----------------------------------------|
+| POST   | `/api/expenses`                    | Registrar gasto                        |
+| GET    | `/api/expenses/event/:eventId`     | Listar gastos por evento               |
+| DELETE | `/api/expenses/:expenseId`         | Eliminar gasto                         |
+| GET    | `/api/expenses/summary/:eventId`    | Consultar resumen financiero           |
+
+### Cronograma de actividades
+
+| Método | URL                               | Descripción                            |
+|--------|------------------------------------|----------------------------------------|
+| POST   | `/api/activities`                  | Crear actividad en el evento           |
+| GET    | `/api/activities/event/:eventId`   | Listar actividades cronológicas        |
+| PUT    | `/api/activities/:activityId`      | Editar actividad                       |
+| DELETE | `/api/activities/:activityId`      | Eliminar actividad                     |
 
 ---
 
 ## Headers para rutas protegidas
 
-Para las rutas que requieren autenticación, incluir:
+Para todas las rutas protegidas, incluir el header:
 
 ```
 Authorization: Bearer <TOKEN_JWT>
@@ -138,7 +173,7 @@ Authorization: Bearer <TOKEN_JWT>
 
 Este proyecto está desplegado automáticamente desde la rama `master` en [Render](https://render.com).
 
-**Build y Start:**
+Build y start:
 ```bash
 npm install && npm run build
 npm start
