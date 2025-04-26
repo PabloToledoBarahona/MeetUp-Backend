@@ -19,6 +19,6 @@ export const login = async ({ email, password }: any) => {
   const match = await bcrypt.compare(password, user.password)
   if (!match) throw new Error('Credenciales inválidas')
 
-  const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' })
+  const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' })
   return token
 }
