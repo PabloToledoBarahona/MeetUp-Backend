@@ -107,7 +107,8 @@ npm start
 | GET    | `/api/events/:id`                  | Obtener evento específico        |
 | PUT    | `/api/events/:id`                  | Editar evento                    |
 | DELETE | `/api/events/:id`                  | Eliminar evento                  |
-| PATCH  | `/api/events/:id/cancel`            | Cancelar evento                  |
+| PATCH  | `/api/events/:id/cancel`           | Cancelar evento                  |
+| PATCH  | `/api/events/:id/uncancel`         | Reactivar evento cancelado       |
 
 **Notas:**
 - El campo `endTime` es opcional.
