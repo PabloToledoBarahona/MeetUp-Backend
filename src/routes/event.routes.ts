@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { createEvent, editEvent, getUserEvents, removeEvent, getBirthdayTemplate, getJunteTemplate, createEventFromTemplate, cancelEventController, getEventById } from '../controllers/event.controller'
+import { createEvent, editEvent, getUserEvents, removeEvent, getBirthdayTemplate, getJunteTemplate, createEventFromTemplate, cancelEventController, getEventById, unCancelEventController } from '../controllers/event.controller'
 import { authenticateToken } from '../middlewares/auth.middleware'
 
 const router = Router()
@@ -13,5 +13,6 @@ router.get('/templates/birthday', authenticateToken, getBirthdayTemplate)
 router.get('/templates/junte', authenticateToken, getJunteTemplate)
 router.post('/from-template', authenticateToken, createEventFromTemplate)
 router.patch('/:id/cancel', authenticateToken, cancelEventController)
+router.patch('/:id/uncancel', authenticateToken, unCancelEventController);
 
 export default router

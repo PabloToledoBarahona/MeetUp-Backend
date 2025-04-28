@@ -124,3 +124,17 @@ export const createEventFromTemplate = async (req: Request, res: Response) => {
       res.status(400).json({ success: false, message: error.message })
     }
   }
+
+  export const unCancelEventController = async (req: Request, res: Response) => {
+    try {
+      // @ts-ignore
+      const userId = req.user.id;
+      const eventId = req.params.id;
+  
+      const uncancelledEvent = await eventService.unCancelEvent(eventId, userId);
+  
+      res.status(200).json({ success: true, message: "Evento reactivado exitosamente", data: uncancelledEvent });
+    } catch (error: any) {
+      res.status(400).json({ success: false, message: error.message });
+    }
+  };

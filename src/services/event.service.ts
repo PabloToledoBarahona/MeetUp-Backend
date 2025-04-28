@@ -60,3 +60,15 @@ export const cancelEvent = async (eventId: string, userId: string) => {
 
   return event;
 };
+
+export const unCancelEvent = async (eventId: string, userId: string) => {
+  const event = await Event.findOne({ _id: eventId, createdBy: userId });
+
+  if (!event) throw new Error("Evento no encontrado o no autorizado");
+  if (!event.isCancelled) throw new Error("El evento ya está activo");
+
+  event.isCancelled = false;
+  await event.save();
+
+  return event;
+};
