@@ -114,6 +114,7 @@ src/
   "startTime": "2025-07-01T18:00:00.000Z",
   "imageUrl": "https://storage.googleapis.com/bucket-imagenes/evento-bienvenida.jpg"
 }
+```
 
 ### Plantillas de eventos
 
