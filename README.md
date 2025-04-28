@@ -92,11 +92,28 @@ src/
 
 | Método | URL                               | Descripción                            |
 |--------|------------------------------------|----------------------------------------|
-| POST   | `/api/events`                      | Crear evento desde cero                |
+| POST   | `/api/events`                      | Crear evento desde cero (con o sin imagen) |
 | GET    | `/api/events`                      | Listar eventos creados por el usuario  |
-| PUT    | `/api/events/:id`                  | Editar evento                          |
+| GET    | `/api/events/:id`                  | Obtener evento específico por ID       |
+| PUT    | `/api/events/:id`                  | Editar evento (puede actualizar imagen) |
 | DELETE | `/api/events/:id`                  | Eliminar evento                        |
 | PATCH  | `/api/events/:id/cancel`            | Cancelar evento sin eliminarlo         |
+
+**Notas:**
+- El campo `endTime` es opcional al crear un evento.
+- Se puede incluir un campo `imageUrl` con la URL pública de la imagen del evento.
+
+**Ejemplo body para crear evento:**
+
+```json
+{
+  "name": "Fiesta de Bienvenida",
+  "description": "Reunión informal",
+  "location": "Club Social",
+  "category": "Reunión",
+  "startTime": "2025-07-01T18:00:00.000Z",
+  "imageUrl": "https://storage.googleapis.com/bucket-imagenes/evento-bienvenida.jpg"
+}
 
 ### Plantillas de eventos
 
