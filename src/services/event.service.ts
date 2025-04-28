@@ -9,6 +9,16 @@ export const createEvent = async (eventData: any, userId: string) => {
   return newEvent;
 };
 
+export const getEventById = async (eventId: string, userId: string) => {
+  const event = await Event.findOne({ _id: eventId, createdBy: userId });
+
+  if (!event) {
+    throw new Error("Evento no encontrado o no autorizado");
+  }
+
+  return event;
+};
+
 export const getEventsByUser = async (userId: string) => {
   const events = await Event.find({ createdBy: userId }).sort({
     createdAt: -1,

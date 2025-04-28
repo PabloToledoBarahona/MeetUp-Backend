@@ -16,6 +16,19 @@ export const createEvent = async (req: Request, res: Response) => {
   }
 };
 
+export const getEventById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    // @ts-ignore
+    const userId = req.user.id;
+
+    const event = await eventService.getEventById(id, userId);
+    res.status(200).json({ success: true, data: event });
+  } catch (error: any) {
+    res.status(404).json({ success: false, message: error.message });
+  }
+};
+
 export const getUserEvents = async (req: Request, res: Response) => {
   try {
     // @ts-ignore
