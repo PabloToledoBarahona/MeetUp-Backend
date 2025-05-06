@@ -23,7 +23,7 @@ export const assignTaskToUser = async (taskId: string, userId: string) => {
   const task = await Task.findById(taskId)
   if (!task) throw new Error('Tarea no encontrada')
 
-  task.assignedTo = new Types.ObjectId(userId) // ✅ Conversión correcta
+  task.assignedTo = new Types.ObjectId(userId)
   await task.save()
   return task
 }

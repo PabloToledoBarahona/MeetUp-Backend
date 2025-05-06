@@ -12,9 +12,9 @@ const taskSchema = new Schema<ITask>(
   {
     title: { type: String, required: true },
     description: { type: String },
-    status: { type: String, enum: ['pending', 'in_progress', 'completed'], default: 'pending' }, // 🔥
+    status: { type: String, enum: ['pending', 'in_progress', 'completed'], default: 'pending' },
     event: { type: Schema.Types.ObjectId, ref: 'Event', required: true },
-    assignedTo: { type: Schema.Types.ObjectId, ref: 'User' } // 🔥
+    assignedTo: { type: Schema.Types.ObjectId, ref: 'User' } 
   },
   { timestamps: true }
 )

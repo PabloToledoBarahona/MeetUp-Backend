@@ -2,7 +2,7 @@ export const birthdayTemplate = {
     name: "Fiesta de Cumpleaños de [Nombre]",
     description: "Una celebración especial con amigos y familia.",
     locationSuggestions: ["Casa", "Salón de eventos", "Parque"],
-    duration: 4, // horas
+    duration: 4,
     category: "Cumpleaños",
     checklist: [
       "Pastel de cumpleaños",

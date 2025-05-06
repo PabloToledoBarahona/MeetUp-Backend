@@ -16,7 +16,7 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
       return
     }
 
-    // @ts-ignore: lo asignamos temporalmente al objeto request
+    // @ts-ignore
     req.user = user
     next()
   })

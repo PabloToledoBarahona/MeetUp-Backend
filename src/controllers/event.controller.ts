@@ -5,7 +5,7 @@ import { birthdayTemplate, junteTemplate } from '../data/templates'
 
 export const createEvent = async (req: Request, res: Response) => {
   try {
-    // @ts-ignore: user viene desde el middleware
+    // @ts-ignore
     const userId = req.user.id;
     const event = await eventService.createEvent(req.body, userId);
     res
@@ -90,7 +90,6 @@ export const createEventFromTemplate = async (req: Request, res: Response) => {
       const userId = req.user.id
       const { type, overrides } = req.body
   
-      // Importamos las plantillas
       const { birthdayTemplate, junteTemplate } = await import('../data/templates')
   
       let baseTemplate
@@ -100,7 +99,7 @@ export const createEventFromTemplate = async (req: Request, res: Response) => {
   
       const eventData = {
         ...baseTemplate,
-        ...overrides // el usuario puede sobreescribir valores como name o startTime
+        ...overrides 
       }
   
       const newEvent = await eventService.createEvent(eventData, userId)
