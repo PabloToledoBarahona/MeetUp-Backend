@@ -24,7 +24,7 @@ app.use('/api/users', userRoutes)
 app.use('/api/events', eventRoutes)
 app.use('/api/invitations', invitationRoutes)
 app.use('/api/tasks', taskRoutes)
-app.use('/api/expenses', expenseRoutes)
+app.use('/api/events', expenseRoutes)
 app.use('/api/activities', activityRoutes)
 
 app.listen(PORT, () => {
