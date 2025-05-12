@@ -10,7 +10,9 @@ const invitationSchema = new mongoose.Schema({
     enum: ['pending', 'confirmed', 'declined', 'maybe'],
     default: 'pending'
   },
-  invitedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
+  invitedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  invitationSent: { type: Boolean, default: false },
+  lastReminderOn: { type: Date }
 }, { timestamps: true })
 
 export default mongoose.model('Invitation', invitationSchema)
