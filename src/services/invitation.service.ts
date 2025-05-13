@@ -1,56 +1,58 @@
-import Invitation from "../models/invitation.model";
+import Invitation from "../models/invitation.model"
+import Event from "../models/event.model"
+import { sendInvitationEmail } from "./mailer.service"
 
-export const importContacts = async (
+export const createInvitation = async (
   eventId: string,
-  contacts: any[],
+  name: string,
+  email: string,
   invitedBy: string
 ) => {
-  const createdInvitations = [];
+  // Validación
+  if (!name || typeof name !== "string") throw new Error("Nombre inválido")
+  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw new Error("Email inválido")
 
-  for (const contact of contacts) {
-    // 🔽 Añadir validaciones aquí
-    if (!contact.name || typeof contact.name !== "string") {
-      throw new Error("Nombre inválido");
-    }
+  // Verificar duplicado
+  const existing = await Invitation.findOne({ event: eventId, email })
+  if (existing) throw new Error("El invitado ya fue agregado")
 
-    if (!contact.email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(contact.email)) {
-      throw new Error("Email inválido");
-    }
+  // Verificar evento
+  const event = await Event.findById(eventId)
+  if (!event) throw new Error("Evento no encontrado")
 
-    const existing = await Invitation.findOne({
-      event: eventId,
-      email: contact.email,
-      phone: contact.phone,
-    });
+  // Crear invitación
+  const invitation = new Invitation({
+    event: eventId,
+    name,
+    email,
+    invitedBy
+  })
 
-    if (!existing) {
-      const newInvitation = new Invitation({
-        event: eventId,
-        name: contact.name,
-        email: contact.email,
-        phone: contact.phone,
-        invitedBy,
-      });
-      await newInvitation.save();
-      createdInvitations.push(newInvitation);
-    }
-  }
+  await invitation.save()
 
-  return createdInvitations;
-};
+  // Enviar correo
+  await sendInvitationEmail(email, event.name, name)
+
+  // Actualizar flags
+  invitation.invitationSent = true
+  invitation.lastReminderOn = new Date()
+  await invitation.save()
+
+  return invitation
+}
 
 export const getInvitationsByEvent = async (eventId: string) => {
-  return Invitation.find({ event: eventId });
-};
+  return Invitation.find({ event: eventId })
+}
 
 export const updateStatus = async (
   invitationId: string,
   status: "pending" | "confirmed" | "declined" | "maybe"
 ) => {
-  const invitation = await Invitation.findById(invitationId);
-  if (!invitation) throw new Error("Invitación no encontrada");
+  const invitation = await Invitation.findById(invitationId)
+  if (!invitation) throw new Error("Invitación no encontrada")
 
-  invitation.status = status;
-  await invitation.save();
-  return invitation;
-};
+  invitation.status = status
+  await invitation.save()
+  return invitation
+}
