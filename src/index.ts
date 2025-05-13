@@ -11,6 +11,7 @@ import invitationRoutes from './routes/invitation.routes'
 import taskRoutes from './routes/task.routes'
 import expenseRoutes from './routes/expense.routes'
 import activityRoutes from './routes/activity.routes'
+import guestRoutes from './routes/guest.routes'
 
 connectDB()
 
@@ -26,6 +27,7 @@ app.use('/api/invitations', invitationRoutes)
 app.use('/api/tasks', taskRoutes)
 app.use('/api/events', expenseRoutes)
 app.use('/api/activities', activityRoutes)
+app.use('/api/guests', guestRoutes)
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`)
