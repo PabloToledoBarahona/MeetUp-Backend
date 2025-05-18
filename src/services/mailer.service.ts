@@ -8,17 +8,12 @@ const transporter = nodemailer.createTransport({
   }
 })
 
-export const sendInvitationEmail = async (to: string, eventName: string, invitedName: string) => {
+export const sendInvitationEmail = async (to: string, subject: string, htmlBody: string) => {
   const mailOptions = {
     from: `"MeetUp Invitaciones" <${process.env.EMAIL_FROM}>`,
     to,
-    subject: `Estás invitado a ${eventName}`,
-    html: `
-      <p>Hola <b>${invitedName}</b>,</p>
-      <p>Has sido invitado a participar en el evento <strong>${eventName}</strong>.</p>
-      <p>Por favor confirma tu asistencia dentro de la app MeetUp.</p>
-      <p>Gracias,<br/>Equipo MeetUp</p>
-    `
+    subject,
+    html: htmlBody
   }
 
   return transporter.sendMail(mailOptions)

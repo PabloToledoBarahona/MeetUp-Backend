@@ -46,3 +46,39 @@ export const listGuestsByEvent = async (req: Request, res: Response) => {
     res.status(400).json({ success: false, message: err.message })
   }
 }
+
+export const sendInvitationsController = async (req: Request, res: Response) => {
+  try {
+    const { message } = req.body
+    const { eventId } = req.params
+    // @ts-ignore
+    const userId = req.user.id
+
+    if (!message || typeof message !== 'string') {
+      throw new Error('Mensaje personalizado requerido')
+    }
+
+    const results = await service.sendMassInvitations(eventId, message, userId)
+    res.status(200).json({ success: true, results })
+  } catch (err: any) {
+    res.status(400).json({ success: false, message: err.message })
+  }
+}
+
+export const sendRemindersController = async (req: Request, res: Response) => {
+  try {
+    const { message } = req.body
+    const { eventId } = req.params
+    // @ts-ignore
+    const userId = req.user.id
+
+    if (!message || typeof message !== 'string') {
+      throw new Error('Mensaje personalizado requerido')
+    }
+
+    const results = await service.sendRemindersToPendingGuests(eventId, message, userId)
+    res.status(200).json({ success: true, results })
+  } catch (err: any) {
+    res.status(400).json({ success: false, message: err.message })
+  }
+}
