@@ -82,3 +82,25 @@ export const sendRemindersController = async (req: Request, res: Response) => {
     res.status(400).json({ success: false, message: err.message })
   }
 }
+
+
+export const confirmGuestResponse = async (req: Request, res: Response) => {
+  try {
+    const { guestId, response } = req.params
+
+    const result = await service.confirmGuestAttendance(guestId, response)
+
+    res.setHeader('Content-Type', 'text/html')
+    res.send(`
+      <html>
+        <head><title>Confirmación</title></head>
+        <body style="font-family:sans-serif;text-align:center;padding:40px;">
+          <h2>${result.title}</h2>
+          <p>${result.message}</p>
+        </body>
+      </html>
+    `)
+  } catch (err: any) {
+    res.status(400).send(`<h2>Error</h2><p>${err.message}</p>`)
+  }
+}

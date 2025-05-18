@@ -44,9 +44,7 @@ export const sendMassInvitations = async (
   if (!event) throw new Error("Evento no encontrado");
 
   if (event.createdBy.toString() !== organizerId) {
-    throw new Error(
-      "No tienes permiso para enviar invitaciones de este evento"
-    );
+    throw new Error("No tienes permiso para enviar invitaciones de este evento");
   }
 
   const guests = await Guest.find({ event: eventId, invitationSent: false });
@@ -54,23 +52,27 @@ export const sendMassInvitations = async (
 
   for (const guest of guests) {
     try {
+      const confirmUrl = `${process.env.APP_BASE_URL}/api/guests/confirm/${guest._id}/attending`;
+      const declineUrl = `${process.env.APP_BASE_URL}/api/guests/confirm/${guest._id}/not_attending`;
+
       const html = `
         <p>Hola <b>${guest.name}</b>,</p>
         <p>${customMessage}</p>
         <ul>
           <li><strong>Evento:</strong> ${event.name}</li>
-          <li><strong>Fecha:</strong> ${new Date(
-            event.startTime
-          ).toLocaleString()}</li>
+          <li><strong>Fecha:</strong> ${new Date(event.startTime).toLocaleString()}</li>
           <li><strong>Lugar:</strong> ${event.location}</li>
         </ul>
-        <p>Por favor confirma tu asistencia desde la app MeetUp.</p>
+        <p>Por favor confirma tu asistencia:</p>
+        <p>
+          <a href="${confirmUrl}" style="padding: 10px 15px; background: green; color: white; text-decoration: none; border-radius: 5px;">Confirmar Asistencia</a>
+          &nbsp;&nbsp;
+          <a href="${declineUrl}" style="padding: 10px 15px; background: red; color: white; text-decoration: none; border-radius: 5px;">No Asistiré</a>
+        </p>
+        <p>Gracias,<br/>Equipo MeetUp</p>
       `;
-      await sendInvitationEmail(
-        guest.email,
-        `Invitación a ${event.name}`,
-        html
-      );
+
+      await sendInvitationEmail(guest.email, `Invitación a ${event.name}`, html);
 
       guest.invitationSent = true;
       guest.lastReminderOn = new Date();
@@ -96,9 +98,7 @@ export const sendRemindersToPendingGuests = async (
   if (!event) throw new Error("Evento no encontrado");
 
   if (event.createdBy.toString() !== organizerId) {
-    throw new Error(
-      "No tienes permiso para enviar recordatorios de este evento"
-    );
+    throw new Error("No tienes permiso para enviar recordatorios de este evento");
   }
 
   const guests = await Guest.find({ event: eventId, status: "pending" });
@@ -111,9 +111,7 @@ export const sendRemindersToPendingGuests = async (
         <p>${customMessage}</p>
         <ul>
           <li><strong>Evento:</strong> ${event.name}</li>
-          <li><strong>Fecha:</strong> ${new Date(
-            event.startTime
-          ).toLocaleString()}</li>
+          <li><strong>Fecha:</strong> ${new Date(event.startTime).toLocaleString()}</li>
           <li><strong>Lugar:</strong> ${event.location}</li>
         </ul>
         <p>Te recordamos confirmar tu asistencia desde la app MeetUp.</p>
@@ -136,4 +134,32 @@ export const sendRemindersToPendingGuests = async (
   }
 
   return results;
+};
+
+export const confirmGuestAttendance = async (
+  guestId: string,
+  response: string
+) => {
+  const validResponses = ['attending', 'not_attending'];
+  if (!validResponses.includes(response)) {
+    throw new Error('Respuesta inválida');
+  }
+
+  const guest = await Guest.findById(guestId);
+  if (!guest) throw new Error('Invitado no encontrado');
+
+  if (guest.status !== 'pending') {
+    throw new Error('Ya se ha registrado una respuesta previamente');
+  }
+
+  guest.status = response === 'attending' ? 'confirmed' : 'rejected';
+  guest.lastReminderOn = new Date();
+  await guest.save();
+
+  return {
+    title: '¡Gracias por tu respuesta!',
+    message: response === 'attending'
+      ? 'Tu asistencia ha sido confirmada correctamente.'
+      : 'Lamentamos que no puedas asistir. Tu respuesta ha sido registrada.'
+  };
 };

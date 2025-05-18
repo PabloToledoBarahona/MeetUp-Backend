@@ -7,7 +7,8 @@ import {
   deleteGuest,
   listGuestsByEvent,
   sendInvitationsController,
-  sendRemindersController
+  sendRemindersController,
+  confirmGuestResponse
 } from '../controllers/guest.controller'
 
 const router = Router()
@@ -20,5 +21,6 @@ router.post('/', authenticateToken, createGuest)
 router.get('/:id', authenticateToken, getGuest)
 router.put('/:id', authenticateToken, updateGuest)
 router.delete('/:id', authenticateToken, deleteGuest)
+router.get('/confirm/:guestId/:response', confirmGuestResponse)
 
 export default router
