@@ -1,31 +1,25 @@
 import nodemailer from 'nodemailer'
+import { config } from '../config/config'
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_FROM,
-    pass: process.env.EMAIL_PASSWORD
+    user: config.emailFrom,
+    pass: config.emailPassword
   }
 })
 
-/**
- * Envía un correo de invitación con enlaces automáticos para confirmar o rechazar asistencia.
- * @param to Dirección de correo del invitado
- * @param subject Asunto del correo
- * @param htmlBody Contenido personalizado adicional del mensaje
- * @param guestId ID del invitado para generar los enlaces de confirmación
- */
 export const sendInvitationEmail = async (
   to: string,
   subject: string,
   htmlBody: string,
-  guestId?: string // opcional para que también funcione en recordatorios simples
+  guestId?: string
 ) => {
   let fullHtml = htmlBody
 
-  if (guestId && process.env.BASE_URL) {
-    const confirmUrl = `${process.env.BASE_URL}/api/guests/confirm/${guestId}/attending`
-    const rejectUrl = `${process.env.BASE_URL}/api/guests/confirm/${guestId}/not_attending`
+  if (guestId) {
+    const confirmUrl = `${config.baseUrl}/api/guests/confirm/${guestId}/attending`
+    const rejectUrl = `${config.baseUrl}/api/guests/confirm/${guestId}/not_attending`
 
     fullHtml += `
       <p style="margin-top:20px;">
@@ -37,12 +31,10 @@ export const sendInvitationEmail = async (
     `
   }
 
-  const mailOptions = {
-    from: `"MeetUp Invitaciones" <${process.env.EMAIL_FROM}>`,
+  return transporter.sendMail({
+    from: `"MeetUp Invitaciones" <${config.emailFrom}>`,
     to,
     subject,
     html: fullHtml
-  }
-
-  return transporter.sendMail(mailOptions)
+  })
 }
