@@ -1,6 +1,7 @@
 import Guest from "../models/guest.model";
 import Event from "../models/event.model";
 import { sendInvitationEmail } from "./mailer.service";
+import { config } from "../config/config";
 
 export const createGuest = async (data: any) => {
   const { event, name, email } = data;
@@ -52,8 +53,8 @@ export const sendMassInvitations = async (
 
   for (const guest of guests) {
     try {
-      const confirmUrl = `${process.env.APP_BASE_URL}/api/guests/confirm/${guest._id}/attending`;
-      const declineUrl = `${process.env.APP_BASE_URL}/api/guests/confirm/${guest._id}/not_attending`;
+      const confirmUrl = `${config.baseUrl}/api/guests/confirm/${guest._id}/attending`;
+      const declineUrl = `${config.baseUrl}/api/guests/confirm/${guest._id}/not_attending`;
 
       const html = `
         <p>Hola <b>${guest.name}</b>,</p>
@@ -72,7 +73,11 @@ export const sendMassInvitations = async (
         <p>Gracias,<br/>Equipo MeetUp</p>
       `;
 
-      await sendInvitationEmail(guest.email, `Invitación a ${event.name}`, html);
+      await sendInvitationEmail(
+        guest.email,
+        `Invitación a ${event.name}`,
+        html
+      );
 
       guest.invitationSent = true;
       guest.lastReminderOn = new Date();
@@ -116,6 +121,7 @@ export const sendRemindersToPendingGuests = async (
         </ul>
         <p>Te recordamos confirmar tu asistencia desde la app MeetUp.</p>
       `;
+
       await sendInvitationEmail(
         guest.email,
         `Recordatorio de ${event.name}`,
