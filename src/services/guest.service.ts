@@ -117,24 +117,32 @@ export const sendRemindersToPendingGuests = async (
 
   for (const guest of guests) {
     try {
+      const confirmUrl = `${config.baseUrl}/api/guests/confirm/${guest._id}/attending`;
+      const declineUrl = `${config.baseUrl}/api/guests/confirm/${guest._id}/not_attending`;
       const html = `
-        <p>Hola <b>${guest.name}</b>,</p>
-        <p>${customMessage}</p>
-        <ul>
-          <li><strong>Evento:</strong> ${event.name}</li>
-          <li><strong>Fecha:</strong> ${new Date(
-            event.startTime
-          ).toLocaleString()}</li>
-          <li><strong>Lugar:</strong> ${event.location}</li>
-        </ul>
-        <p>Te recordamos confirmar tu asistencia desde la app MeetUp.</p>
-      `;
+  <p>Hola <b>${guest.name}</b>,</p>
+  <p>${customMessage}</p>
+  <ul>
+    <li><strong>Evento:</strong> ${event.name}</li>
+    <li><strong>Fecha:</strong> ${new Date(
+      event.startTime
+    ).toLocaleString()}</li>
+    <li><strong>Lugar:</strong> ${event.location}</li>
+  </ul>
+  <p>Por favor confirma tu asistencia:</p>
+  <p>
+    <a href="${confirmUrl}" style="padding: 10px 15px; background: green; color: white; text-decoration: none; border-radius: 5px;">Confirmar Asistencia</a>
+    &nbsp;&nbsp;
+    <a href="${declineUrl}" style="padding: 10px 15px; background: red; color: white; text-decoration: none; border-radius: 5px;">No Asistiré</a>
+  </p>
+  <p>Gracias,<br/>Equipo MeetUp</p>
+`;
 
       await sendInvitationEmail(
         guest.email,
         `Recordatorio de ${event.name}`,
         html,
-        guest._id.toString() 
+        guest._id.toString()
       );
 
       guest.lastReminderOn = new Date();
