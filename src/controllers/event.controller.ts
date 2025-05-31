@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import * as eventService from "../services/event.service";
 import { birthdayTemplate, junteTemplate } from '../data/templates'
+import Guest from '../models/guest.model'
+import Event from '../models/event.model'
 
 
 export const createEvent = async (req: Request, res: Response) => {
@@ -137,3 +139,19 @@ export const createEventFromTemplate = async (req: Request, res: Response) => {
       res.status(400).json({ success: false, message: error.message });
     }
   };
+
+  export const getEventForGuest = async (req: Request, res: Response) => {
+  try {
+    const { guestId } = req.params
+
+    const guest = await Guest.findById(guestId)
+    if (!guest) throw new Error('Invitado no encontrado')
+
+    const event = await Event.findById(guest.event)
+    if (!event) throw new Error('Evento no encontrado')
+
+    res.status(200).json({ success: true, data: event })
+  } catch (err: any) {
+    res.status(400).json({ success: false, message: err.message })
+  }
+}
