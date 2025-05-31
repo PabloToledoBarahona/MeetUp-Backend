@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Event from "../models/event.model";
 
 export const createEvent = async (eventData: any, userId: string) => {
@@ -70,5 +71,56 @@ export const unCancelEvent = async (eventId: string, userId: string) => {
   event.isCancelled = false;
   await event.save();
 
+  return event;
+};
+
+
+const ObjectId = mongoose.Types.ObjectId;
+
+export const addCollaborator = async (
+  eventId: string,
+  userId: string,
+  collaboratorId: string
+) => {
+  if (!ObjectId.isValid(eventId) || !ObjectId.isValid(collaboratorId)) {
+    throw new Error("ID inválido");
+  }
+
+  const event = await Event.findOne({ _id: eventId, createdBy: userId });
+  if (!event) throw new Error("Evento no encontrado o no autorizado");
+
+  const alreadyAdded = event.collaborators?.some(
+    (id) => id.toString() === collaboratorId
+  );
+  if (alreadyAdded) throw new Error("El colaborador ya está asignado");
+
+  event.collaborators = [...(event.collaborators || []), new ObjectId(collaboratorId)];
+  await event.save();
+
+  return event;
+};
+
+export const removeCollaborator = async (
+  eventId: string,
+  userId: string,
+  collaboratorId: string
+) => {
+  if (!ObjectId.isValid(eventId) || !ObjectId.isValid(collaboratorId)) {
+    throw new Error("ID inválido");
+  }
+
+  const event = await Event.findOne({ _id: eventId, createdBy: userId });
+  if (!event) throw new Error("Evento no encontrado o no autorizado");
+
+  const initialCount = event.collaborators?.length || 0;
+  event.collaborators = (event.collaborators || []).filter(
+    (id) => id.toString() !== collaboratorId
+  );
+
+  if (event.collaborators.length === initialCount) {
+    throw new Error("El colaborador no estaba asignado");
+  }
+
+  await event.save();
   return event;
 };

@@ -155,3 +155,37 @@ export const createEventFromTemplate = async (req: Request, res: Response) => {
     res.status(400).json({ success: false, message: err.message })
   }
 }
+
+export const addCollaboratorController = async (req: Request, res: Response) => {
+  try {
+    const { collaboratorId } = req.body;
+    const { id: eventId } = req.params;
+    // @ts-ignore
+    const userId = req.user.id;
+
+    if (!collaboratorId) throw new Error("ID del colaborador requerido");
+
+    const updatedEvent = await eventService.addCollaborator(eventId, userId, collaboratorId);
+
+    res.status(200).json({ success: true, message: "Colaborador agregado exitosamente", data: updatedEvent });
+  } catch (err: any) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+export const removeCollaboratorController = async (req: Request, res: Response) => {
+  try {
+    const { collaboratorId } = req.body;
+    const { id: eventId } = req.params;
+    // @ts-ignore
+    const userId = req.user.id;
+
+    if (!collaboratorId) throw new Error("ID del colaborador requerido");
+
+    const updatedEvent = await eventService.removeCollaborator(eventId, userId, collaboratorId);
+
+    res.status(200).json({ success: true, message: "Colaborador eliminado exitosamente", data: updatedEvent });
+  } catch (err: any) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
