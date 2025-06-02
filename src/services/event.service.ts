@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Event from "../models/event.model";
+import User from "../models/user.model";
 
 export const createEvent = async (eventData: any, userId: string) => {
   const newEvent = new Event({
@@ -82,21 +83,21 @@ export const addCollaborator = async (
   userId: string,
   collaboratorId: string
 ) => {
-  if (!ObjectId.isValid(eventId) || !ObjectId.isValid(collaboratorId)) {
-    throw new Error("ID inválido");
-  }
-
   const event = await Event.findOne({ _id: eventId, createdBy: userId });
   if (!event) throw new Error("Evento no encontrado o no autorizado");
 
-  const alreadyAdded = event.collaborators?.some(
-    (id) => id.toString() === collaboratorId
-  );
-  if (alreadyAdded) throw new Error("El colaborador ya está asignado");
+  const user = await User.findById(collaboratorId);
+  if (!user) throw new Error("El usuario no existe");
 
-  event.collaborators = [...(event.collaborators || []), new ObjectId(collaboratorId)];
+  const alreadyExists = event.collaborators?.some(c => c.id === collaboratorId);
+  if (alreadyExists) throw new Error("El colaborador ya está asignado");
+
+  event.collaborators = [
+    ...(event.collaborators || []),
+    { id: user._id.toString(), name: user.name, email: user.email }
+  ];
+
   await event.save();
-
   return event;
 };
 
@@ -105,19 +106,16 @@ export const removeCollaborator = async (
   userId: string,
   collaboratorId: string
 ) => {
-  if (!ObjectId.isValid(eventId) || !ObjectId.isValid(collaboratorId)) {
-    throw new Error("ID inválido");
-  }
-
   const event = await Event.findOne({ _id: eventId, createdBy: userId });
   if (!event) throw new Error("Evento no encontrado o no autorizado");
 
-  const initialCount = event.collaborators?.length || 0;
+  const prevLength = event.collaborators?.length || 0;
+
   event.collaborators = (event.collaborators || []).filter(
-    (id) => id.toString() !== collaboratorId
+    c => c.id !== collaboratorId
   );
 
-  if (event.collaborators.length === initialCount) {
+  if (event.collaborators.length === prevLength) {
     throw new Error("El colaborador no estaba asignado");
   }
 

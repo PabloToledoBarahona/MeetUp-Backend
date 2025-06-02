@@ -1,4 +1,10 @@
-import { Schema, model, Document, Types } from 'mongoose'
+import { Schema, model, Document } from 'mongoose'
+
+interface CollaboratorInfo {
+  id: string
+  name: string
+  email: string
+}
 
 export interface IEvent extends Document {
   name: string
@@ -8,11 +14,20 @@ export interface IEvent extends Document {
   startTime: Date
   endTime?: Date 
   imageUrl?: string 
-  createdBy: Types.ObjectId
+  createdBy: Schema.Types.ObjectId
   isCancelled: boolean
   budget?: number
-  collaborators?: Types.ObjectId[]
+  collaborators?: CollaboratorInfo[]
 }
+
+const collaboratorSchema = new Schema<CollaboratorInfo>(
+  {
+    id: { type: String, required: true },
+    name: { type: String, required: true },
+    email: { type: String, required: true }
+  },
+  { _id: false } // evitar crear _id para cada colaborador
+)
 
 const eventSchema = new Schema<IEvent>(
   {
@@ -26,11 +41,10 @@ const eventSchema = new Schema<IEvent>(
     createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     isCancelled: { type: Boolean, default: false },
     budget: { type: Number },
-    collaborators: [{ type: Schema.Types.ObjectId, ref: 'User' }]
+    collaborators: [collaboratorSchema]
   },
   { timestamps: true }
 )
 
 const Event = model<IEvent>('Event', eventSchema)
-
 export default Event
