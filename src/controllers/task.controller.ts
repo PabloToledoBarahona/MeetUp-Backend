@@ -3,10 +3,12 @@ import * as service from '../services/task.service'
 
 export const createTask = async (req: Request, res: Response): Promise<void> => {
   try {
-    const task = await service.createTask(req.body)
-    res.status(201).json({ success: true, data: task })
+    // @ts-ignore
+    const userId = req.user.id;
+    const task = await service.createTask(req.body, userId);
+    res.status(201).json({ success: true, data: task });
   } catch (error: any) {
-    res.status(400).json({ success: false, message: error.message })
+    res.status(400).json({ success: false, message: error.message });
   }
 }
 
