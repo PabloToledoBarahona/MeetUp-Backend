@@ -18,7 +18,7 @@ export const getEventById = async (eventId: string, userId: string) => {
     throw new Error("Evento no encontrado o no autorizado");
   }
 
-  return event;
+  return event.toObject(); 
 };
 
 export const getEventsByUser = async (userId: string) => {
