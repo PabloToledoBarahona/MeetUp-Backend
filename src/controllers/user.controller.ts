@@ -38,3 +38,12 @@ export const getMe = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ success: false, message: 'Error del servidor' })
   }
 }
+
+export const getAllUsers = async (_req: Request, res: Response) => {
+  try {
+    const users = await User.find().select('_id name email')
+    res.status(200).json({ success: true, data: users })
+  } catch (err: any) {
+    res.status(500).json({ success: false, message: err.message })
+  }
+}
