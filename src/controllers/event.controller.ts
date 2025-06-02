@@ -189,3 +189,16 @@ export const removeCollaboratorController = async (req: Request, res: Response) 
     res.status(400).json({ success: false, message: err.message });
   }
 };
+
+export const getEventCollaborators = async (req: Request, res: Response) => {
+  try {
+    const { id: eventId } = req.params;
+    const event = await Event.findById(eventId).populate('collaborators', 'name email');
+
+    if (!event) throw new Error('Evento no encontrado');
+
+    res.status(200).json({ success: true, data: event.collaborators });
+  } catch (err: any) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
