@@ -42,7 +42,7 @@ export const assignTaskToUser = async (taskId: string, userId: string) => {
   const user = await User.findById(userId);
   if (!user) throw new Error('El usuario no existe');
 
-  const isCollaborator = event.collaborators?.some(id => id.toString() === userId);
+  const isCollaborator = event.collaborators?.some(c => c.id === userId);
   if (!isCollaborator) throw new Error('El usuario no es colaborador del evento');
 
   task.assignedTo = new Types.ObjectId(userId);
