@@ -72,3 +72,12 @@ export const updateOwnTaskStatus = async (
   await task.save()
   return task
 }
+
+export const unassignTask = async (taskId: string) => {
+  const task = await Task.findById(taskId);
+  if (!task) throw new Error("Tarea no encontrada");
+
+  task.assignedTo = undefined;
+  await task.save();
+  return task;
+};

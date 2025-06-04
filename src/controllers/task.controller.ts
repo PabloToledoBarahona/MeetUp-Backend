@@ -68,3 +68,13 @@ export const updateOwnTaskStatus = async (req: Request, res: Response): Promise<
       res.status(403).json({ success: false, message: error.message })
     }
   }
+
+export const unassignTask = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { taskId } = req.params;
+    const updated = await service.unassignTask(taskId);
+    res.status(200).json({ success: true, data: updated });
+  } catch (err: any) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};

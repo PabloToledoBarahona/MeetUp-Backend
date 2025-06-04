@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Event from "../models/event.model";
 import User from "../models/user.model";
+import Task from '../models/task.model'
 
 export const createEvent = async (eventData: any, userId: string) => {
   const newEvent = new Event({
@@ -109,6 +110,15 @@ export const removeCollaborator = async (
   const event = await Event.findOne({ _id: eventId, createdBy: userId });
   if (!event) throw new Error("Evento no encontrado o no autorizado");
 
+  const hasAssignedTasks = await Task.exists({
+    event: eventId,
+    assignedTo: collaboratorId
+  });
+
+  if (hasAssignedTasks) {
+    throw new Error("Este colaborador tiene tareas asignadas. No se puede eliminar.");
+  }
+
   const prevLength = event.collaborators?.length || 0;
 
   event.collaborators = (event.collaborators || []).filter(
@@ -121,4 +131,8 @@ export const removeCollaborator = async (
 
   await event.save();
   return event;
+};
+
+export const getEventsAsCollaborator = async (userId: string) => {
+  return Event.find({ 'collaborators.id': userId }).sort({ createdAt: -1 });
 };

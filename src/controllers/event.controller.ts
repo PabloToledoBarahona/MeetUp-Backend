@@ -202,3 +202,14 @@ export const getEventCollaborators = async (req: Request, res: Response) => {
     res.status(400).json({ success: false, message: err.message });
   }
 };
+
+export const getEventsAsCollaboratorController = async (req: Request, res: Response) => {
+  try {
+    // @ts-ignore
+    const userId = req.user.id;
+    const events = await eventService.getEventsAsCollaborator(userId);
+    res.status(200).json({ success: true, data: events });
+  } catch (err: any) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
