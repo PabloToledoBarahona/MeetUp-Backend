@@ -81,3 +81,9 @@ export const unassignTask = async (taskId: string) => {
   await task.save();
   return task;
 };
+
+export const getTasksAssignedToUser = async (userId: string) => {
+  return Task.find({ assignedTo: userId })
+    .populate('event', 'name startTime')
+    .sort({ createdAt: -1 });
+};

@@ -78,3 +78,14 @@ export const unassignTask = async (req: Request, res: Response): Promise<void> =
     res.status(400).json({ success: false, message: err.message });
   }
 };
+
+export const getMyAssignedTasks = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // @ts-ignore
+    const userId = req.user.id;
+    const tasks = await service.getTasksAssignedToUser(userId);
+    res.status(200).json({ success: true, data: tasks });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
