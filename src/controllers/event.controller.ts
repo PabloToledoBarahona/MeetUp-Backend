@@ -213,3 +213,21 @@ export const getEventsAsCollaboratorController = async (req: Request, res: Respo
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+export const getEventForCollaborator = async (req: Request, res: Response) => {
+  try {
+    const { id: eventId } = req.params;
+    // @ts-ignore
+    const userId = req.user.id;
+
+    const event = await Event.findById(eventId);
+    if (!event) throw new Error('Evento no encontrado');
+
+    const isCollaborator = event.collaborators?.some(c => c.id === userId);
+    if (!isCollaborator) throw new Error('No tienes acceso a este evento');
+
+    res.status(200).json({ success: true, data: event });
+  } catch (err: any) {
+    res.status(403).json({ success: false, message: err.message });
+  }
+};
